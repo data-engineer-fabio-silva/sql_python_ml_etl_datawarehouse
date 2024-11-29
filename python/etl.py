@@ -5,9 +5,10 @@ import csv
 import psycopg2
 from dotenv import load_dotenv
 import paramiko
+import json
+from openpyxl import load_workbook
 
 import warnings
-from openpyxl import load_workbook
 warnings.simplefilter('ignore', UserWarning)
 
 def sftp_move_files(rasp_ip, rasp_ssh_port, usernm_sftp, rasp_pwd, win_path_plan_gas, rasp_home_path):
@@ -61,10 +62,6 @@ def valor_empty(path_base, dataframe):
         raise KeyError(f"The column 'valor' does not exist in the DataFrame.")
     except Exception as e:
         raise e
-
-def categorize_produto():
-    # ajust and migrate
-    pass
 
 def fato_2023(path_base, folder_tabelas):
 
@@ -127,7 +124,6 @@ def notas_fiscais_2024(path_base, folder_tabelas):
     df_notas_fiscais_2024 = pd.read_excel(path_base + 'notas_fiscais_2024.xlsx')
 
     df_notas_fiscais_2024 = df_notas_fiscais_2024.dropna(axis = 'index', subset = ['cod_item'], how = 'all', inplace = False)
-    # .fillna(value = {'quantidade': 0, 'preco': 0, 'valor': 0})
 
     df_notas_fiscais_2024 = df_notas_fiscais_2024.dropna(axis = 'index', subset = ['data'], how = 'all', inplace = False)
 
@@ -135,11 +131,6 @@ def notas_fiscais_2024(path_base, folder_tabelas):
     df_notas_fiscais_2024 = df_notas_fiscais_2024.rename(columns = {'index': 'id_notas_fiscais_gastos'})
 
     df_notas_fiscais_2024['id_notas_fiscais_gastos'] = df_notas_fiscais_2024.index + 1
-
-    # df_notas_fiscais_2024['VL ITEM R$']= df_notas_fiscais_2024['VL ITEM R$'].str.replace(',', '.')
-    # df_notas_fiscais_2024['preco']= df_notas_fiscais_2024['preco'].str.replace(',', '.')
-    # df_notas_fiscais_2024['valor']= df_notas_fiscais_2024['valor'].str.replace(',', '.')
-
     # print(df_notas_fiscais_2024.dtypes)
 
     df_notas_fiscais_2024['cod_item'] = df_notas_fiscais_2024['cod_item'].apply(int)
@@ -164,9 +155,73 @@ def notas_fiscais_2024(path_base, folder_tabelas):
 
     df_notas_fiscais_2024.to_csv(path_base + folder_tabelas + 'processed/fato_notas_2024.csv', index = False, sep = ';')
 
-def atv_pro(path_base, folder_tabelas):
-    # adjust and migrate the funciton
-    pass
+def atv_pro(path_base, folder_tabelas, product_to_cat, product_to_sector, atv_pro_load_years):
+
+    df_join_atv_pro = pd.DataFrame()
+    
+    cat = json.loads(product_to_cat)
+    sec = json.loads(product_to_sector)
+    # print(cat)
+    # print(sec)
+
+    for i in atv_pro_load_years: 
+
+        folder_atv_pro = 'bov\\' + i +  '\\' + 'atv_pro\\'
+
+        df_atv = pd.read_excel(path_base + folder_atv_pro + 'atv_' + i + '.xlsx')
+        df_pro = pd.read_excel(path_base + folder_atv_pro + 'pro_' + i + '.xlsx')
+
+        dataset_cols = {
+            'Data': 'data',
+            'Movimentação': 'movimentacao',
+            'Produto': 'produto',
+            'Quantidade': 'qtd',
+            'Preço unitário': 'preco_unit',
+            'Valor da Operação': 'valor_operacao',
+        }
+
+        df_atv = df_atv.rename(columns = dataset_cols)
+        df_pro = df_pro.rename(columns = dataset_cols)
+
+        df_atv_processed = pd.DataFrame()
+        df_pro_processed = pd.DataFrame()
+
+        def find_key(value, mapping):
+            
+            for key, values in mapping.items():
+                if value in values:
+                    return key
+            return None
+        
+        if i != atv_pro_load_years[1]: # this year doesn't have atv
+            df_atv_processed['id'] = df_atv.index + 1
+            df_atv_processed['data'] = pd.to_datetime(df_atv['data'], format = '%d/%m/%Y')
+            df_atv_processed['movimentacao'] = df_atv['movimentacao']
+            df_atv_processed['produto_nm'] = df_atv['produto']
+            df_atv_processed[['produto', 'produto_nm']] = df_atv['produto'].str.split(n = 1, pat = ' - ', expand = True)
+            df_atv_processed['sector'] = df_atv_processed['produto'].apply(lambda x: find_key(x, cat))
+            df_atv_processed['category'] = df_atv_processed['produto'].apply(lambda x: find_key(x, sec))
+            df_atv_processed['qtd'] = df_atv['qtd'].apply(int)
+            df_atv_processed['preco_unit'] = df_atv['preco_unit']
+            df_atv_processed['valor_operacao'] = df_atv['valor_operacao']
+            # print(df_atv_processed.head())
+
+        df_pro_processed['id'] = df_pro.index + 1
+        df_pro_processed['data'] = pd.to_datetime(df_pro['data'], format = '%d/%m/%Y')#'%Y-%m-%d
+        df_pro_processed['movimentacao'] = df_pro['movimentacao']
+        df_pro_processed['produto_nm'] = df_pro['produto']
+        df_pro_processed[['produto', 'produto_nm']] = df_pro['produto'].str.split(n = 1, pat = ' - ', expand = True)     
+        df_pro_processed['sector'] = df_pro_processed['produto'].apply(lambda x: find_key(x, cat))
+        df_pro_processed['category'] = df_pro_processed['produto'].apply(lambda x: find_key(x, sec))
+        df_pro_processed['qtd'] = df_pro['qtd'].apply(int)
+        df_pro_processed['preco_unit'] = df_pro['preco_unit'].round(3)
+        df_pro_processed['valor_operacao'] = df_pro['valor_operacao']
+        # print(df_pro_processed.head())
+        
+        df_join_atv_pro = pd.concat([df_join_atv_pro, df_atv_processed, df_pro_processed], axis = 0)
+
+    # print(df_join_atv_pro)
+    df_join_atv_pro.to_csv(path_base + folder_tabelas + 'processed/fato_atv_pro_concat.csv', index = False, sep = ';')
 
 def nu_pf(path_base, folder_tabelas):
         
@@ -223,12 +278,75 @@ def salary(path_base, folder_tabelas):
     df_processed.to_csv(path_base + folder_tabelas + 'processed/dim_salario.csv', index = False, sep = ';')
 
 def proc_b(path_base, folder_tabelas, folder, file):
-    # adjust and migrate code
-    pass
 
-def b(path_base, folder_tabelas):
-    # adjust and migrate code
-    pass
+    df_b = pd.read_csv(path_base + folder + file, delimiter = ',', dtype = 'str', encoding = 'UTF-8')
+    # print(df_b.head())
+
+    df_processed = pd.DataFrame()
+
+    df_processed['created_timestamp'] = df_b['Date(UTC)']
+    df_processed['executed_timestamp'] = df_b['Time']
+    df_processed['par'] = df_b['Pair']
+    df_split_0 = df_b['Pair'].str.split(pat='BRL', expand=True)
+    df_processed['m'] = df_split_0[0]
+    df_processed['tipo'] = df_b['Type']
+    df_processed['qtd_ordem'] = df_b['Order Amount']
+    df_processed['qtd_executed'] = df_b['Executed']
+
+    for i in range(len(df_b)):
+        df_split_1 = df_b.at[i, 'Executed'].split(str(df_processed.at[i, 'm']))[0]
+        df_processed.at[i, 'qtd_comprada'] = df_split_1
+
+    df_processed['preco_ordem'] = df_b['Order Price']
+    df_processed['preco_medio_ordem'] = df_b['Average Price']
+    df_split_2 = df_b['Trading total'].str.split(pat='BRL', expand=True)
+    df_processed['preco_reais'] = df_split_2[0].astype(float).round(4)
+    df_processed['status'] = df_b['Status']
+
+    # print(df_processed.head())
+    df_filtered = df_processed[df_processed['status'].isin(['FILLED'])]
+    # print(df_filtered.head())
+
+    return df_filtered
+
+def b(path_base, folder_tabelas, folder, file, qtd_files, cat_name, proc_file_path):
+    
+    all_dfs = []
+    df_join_anos = pd.DataFrame()
+    folder = folder.split(',')
+    file = file.split(',')
+
+    for i in range(qtd_files):
+
+        df_processed = proc_b(path_base, folder_tabelas, folder[i], file[i])
+        all_dfs.append(df_processed)
+
+    df_join_anos = pd.concat(all_dfs, ignore_index=True)
+
+    df_renamed = pd.DataFrame()
+
+    # df_renamed['data'] = pd.to_datetime(df_join_anos['executed_timestamp']).dt.strftime('%d/%m/%Y')
+    df_renamed['data'] = pd.to_datetime(df_join_anos['executed_timestamp'], format='%Y-%m-%d %H:%M:%S').dt.strftime('%Y-%m-%d')
+
+    # df_processed_2024['data'] = pd.to_datetime(df_processed_2024['data'], format = '%Y-%m-%d')
+
+    df_renamed['in_out'] = 'in'
+    df_renamed['categoria'] = cat_name
+    df_renamed['investimento'] = df_join_anos['m']
+    df_renamed['quantidade'] = df_join_anos['qtd_comprada']
+    df_renamed['preco'] = df_join_anos['preco_medio_ordem']
+    df_renamed['valor'] = df_join_anos['preco_reais']
+    df_renamed['status'] = 'investido'
+    df_renamed['descricao'] = ''
+
+    # print(df_renamed.head())
+    df_join_anos.to_csv(path_base + proc_file_path + 'b_join_anos.csv', index = False, sep = ';', encoding = 'UTF-8')
+    # print(df_renamed.dtypes)
+
+    # df_filtered = df_renamed[(pd.to_datetime(df_renamed['data'], format = '%d/%m/%Y').dt.year >= 2024) & (pd.to_datetime(df_renamed['data'], format = '%d/%m/%Y').dt.month >= 4)]
+    df_filtered = df_renamed[(pd.to_datetime(df_renamed['data'], format = '%Y-%m-%d').dt.year >= 2024) & (pd.to_datetime(df_renamed['data'], format = '%Y-%m-%d').dt.month >= 4)]
+
+    df_filtered.to_csv(path_base + proc_file_path + 'b_fato_gastos.csv', index = False, sep = ';', encoding = 'UTF-8')
 
 def connect_to_postgres(host, database, user, password):
 
@@ -299,6 +417,7 @@ if __name__ == '__main__':
 
     file_fat_pla_gas_con_anos = os.getenv('file_fat_pla_gas_con_anos')
     table_nm_fat_plan_gas = os.getenv('table_nm_fat_plan_gas')
+    col_inv = os.getenv('col_inv')
 
     file_salary = os.getenv('file_salary')
     table_nm_salary = os.getenv('table_nm_salary')
@@ -306,18 +425,25 @@ if __name__ == '__main__':
     file_fat_notas = os.getenv('file_fat_notas')
     table_nm_fat_notas = os.getenv('table_nm_fat_notas')
 
-    file_fat_atv_prov = os.getenv('file_fat_atv_prov')
-    table_nm_fat_atv_prov = os.getenv('table_nm_fat_atv_prov')
-
+    file_fat_atv_pro = os.getenv('file_fat_atv_pro')
+    table_nm_fat_atv_pro = os.getenv('table_nm_fat_atv_pro')
+    atv_pro_load_years = os.getenv('atv_pro_load_years')
+    product_to_cat = os.getenv('product_to_cat')
+    product_to_sector = os.getenv('product_to_sector')
+  
     file_nu_pf = os.getenv('file_nu_pf')
 
     file_b = os.getenv('file_b')
+    b_cat_name = os.getenv('b_cat_name')
+    b_list_folder = os.getenv('b_list_folder')
+    b_list_file = os.getenv('b_list_file')
+    b_proc_file_path = os.getenv('b_proc_file_path')
+    b_c = os.getenv('b_c')
 
     update_databases = os.getenv('update_databases', 'False').lower() in ['true', '1', 'yes', 'y', 't']
     update_files_sftp = os.getenv('update_files_sftp', 'False').lower() in ['true', '1', 'yes', 'y', 't']
 
     ####
-
     if os.getenv('env') == 'win':
         path_base = win_path_plan_gas + 'proj_plano_gastos\\'
         folder_tabelas = '\\tabelas\\'
@@ -341,7 +467,7 @@ if __name__ == '__main__':
     notas_fiscais_2024(path_base, folder_tabelas)
     print('Notas fiscais processadas com sucesso')
 
-    atv_pro(path_base, folder_tabelas)
+    atv_pro(path_base, folder_tabelas, product_to_cat, product_to_sector, atv_pro_load_years)
     print('Atv/pas processadas com sucesso')
 
     # nu_pf(path_base, folder_tabelas)
@@ -350,7 +476,7 @@ if __name__ == '__main__':
     salary(path_base, folder_tabelas)
     print('Salário processado com sucesso')
 
-    b(path_base, folder_tabelas)
+    b(path_base, folder_tabelas, b_list_folder, b_list_file, 3, b_cat_name, b_proc_file_path)
     print('B processed successfully')
 
     ####
@@ -370,11 +496,13 @@ if __name__ == '__main__':
 
             delete_all_rows(conn, table_nm_fat_notas)
             
-            delete_all_rows(conn, table_nm_fat_atv_prov)
+            delete_all_rows(conn, table_nm_fat_atv_pro)
             
             # delete_all_rows(conn, table_nm_fat_plan_gas, True, 'quantidade = -100')
 
-            delete_all_rows(conn, table_nm_salary, True, 'data => %s AND inv = %s', ('02/04/2024', ''))
+            delete_all_rows(conn, table_nm_salary)
+
+            delete_all_rows(conn, table_nm_fat_plan_gas, True, f'data = %s AND {col_inv} = %s', ('02/04/2024', b_c))
 
             ####
             insert_data_from_csv(conn, system_path + file_fat_pla_gas_con_anos, table_nm_fat_plan_gas)
@@ -383,7 +511,7 @@ if __name__ == '__main__':
             insert_data_from_csv(conn, system_path + file_fat_notas, table_nm_fat_notas)
             print('Data successfully imported from CSV to Fato Notas table.')
 
-            insert_data_from_csv(conn, system_path + file_fat_atv_prov, table_nm_fat_atv_prov)
+            insert_data_from_csv(conn, system_path + file_fat_atv_pro, table_nm_fat_atv_pro)
             print('Data successfully imported from CSV to Fato Atv Pas table.')
 
             # insert_data_from_csv(conn, system_path + file_nu_pf, table_nm_fat_plan_gas)
@@ -392,7 +520,7 @@ if __name__ == '__main__':
             insert_data_from_csv(conn, system_path + file_salary, table_nm_salary)
             print('Data successfully imported from CSV to Salary table.')
 
-            insert_data_from_csv(conn, system_path + file_b, table_nm_fat_plan_gas)
+            insert_data_from_csv(conn, path_base + b_proc_file_path + file_b, table_nm_fat_plan_gas)
             print('Data successfully imported from CSV to B table.')
             ####
         except Exception as e:
