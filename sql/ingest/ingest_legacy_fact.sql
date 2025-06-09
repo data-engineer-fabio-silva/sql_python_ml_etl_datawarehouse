@@ -1,4 +1,4 @@
-CREATE TABLE public.stg_legacy_fact (
+CREATE TABLE public.ingest_legacy_fact (
 	"date" varchar(500)
 	,in_out varchar(500)
 	,category_nm varchar(500)

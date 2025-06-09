@@ -1,4 +1,4 @@
-CREATE TABLE public.stg_salary (
+CREATE TABLE public.ingest_salary (
 	"name" varchar(500)
 	,worked_hours varchar(500)
 	,gross_salary varchar(500)

@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW public.vw_stg_legacy_fact
+CREATE OR REPLACE VIEW public.vw_stg_bank_cards
 AS SELECT 
     to_date(date, 'YYYY-MM-DD') AS data
     ,cast(in_out as varchar(5)) AS in_out
@@ -10,5 +10,5 @@ AS SELECT
     ,cast(status as varchar(50)) AS status
     ,cast(description as varchar(100)) AS description
     ,cast(path as varchar(200)) AS path
-FROM ingest_legacy_fact
-WHERE date not in ('NaT', 'nan');
+FROM ingest_bank_cards
+WHERE date not in ('NaT', 'nan') and total <> 'nan';
