@@ -22,7 +22,7 @@ and transformation in downstream views like `vw_stg_bov`.
 ================================================================================
 */
 
-CREATE TABLE public.stg_bov (
+CREATE TABLE public.ingest_bov (
 	entrada_saida varchar(500),
 	"data" varchar(500),
 	movimentacao varchar(500),

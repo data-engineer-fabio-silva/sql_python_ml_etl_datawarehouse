@@ -1,4 +1,11 @@
-sql/
+sql/excluir
+sql/legacy
+sql/backup
+drive/
+.env_legacy
+GLOSSARY.md
+backup_files/
+pbi - validations.pbix
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -37,4 +37,4 @@ SELECT
   ,cast(NULLIF(preco_unitario, '-') as numeric(15,2)) AS preco_unitario
   ,cast(NULLIF(valor_da_operacao, '-') as numeric(15,2)) AS valor_da_operacao
   ,cast(path as varchar(500)) AS path
-FROM stg_bov;
+FROM ingest_bov;

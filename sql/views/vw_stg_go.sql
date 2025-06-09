@@ -8,5 +8,5 @@ AS SELECT
     ,cast(replace(total, ',', '.') as numeric(15,4)) AS total
     ,cast(description as varchar(100)) AS description
     ,cast(path as varchar(200)) AS path
-FROM stg_go
+FROM ingest_go
 WHERE date not in ('NaT', 'nan');
