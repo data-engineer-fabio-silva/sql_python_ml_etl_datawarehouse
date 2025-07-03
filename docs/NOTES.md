@@ -1,10 +1,21 @@
-pip install -r requirements.txt
+# WIP
+## To Do
+* Migrate codes to this new repo
+* Translate the code to english
+* Migrate readme
+* Migrate categorize_produto function
+* Create dimentional diagram image
+* Anonymize variables, function, paths names
+* Reformulate raspberry setup readme
+* Add folder struct on readme
+* Unify fato_2023 and 24 in just one function
+* Migrate sensitive data to .env
+* Add code on sql folder
 
-pip install --upgrade psycopg2
+## Jira Backlog
+#### Task Id 
+* 15 - Migrate code (WIP)
+* 22 - Document queries
 
-pip install --upgrade python-dotenv
-
-sftp user@ip
-pwd
-lpwd
-put -r <c:\folder path\>
+## Notes
+* Before running the 'recreate_views' script, validate that the table/views is added to metadata_object_dependencies.
