@@ -1,0 +1,15 @@
+CREATE TABLE public.ingest_receipts (
+	"date" varchar(50)
+	,receipt_number varchar(100)
+	,count_item varchar(50)
+	,cod_item varchar(50)
+	,description varchar(100)
+	,qtd_item varchar(50)
+	,qtd_unit varchar(50)
+	,value_unit varchar(50)
+	,value_tax varchar(50)
+	,value_item varchar(50)
+	,category varchar(100)
+	,name_item varchar(100)
+	,"path" varchar(500)
+);

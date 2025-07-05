@@ -1,9 +1,9 @@
 CREATE TABLE public.ingest_me (
-	"date" varchar(500)
-	,atv_natv varchar(500)
-	,category_nm varchar(500)
-	,price varchar(500)
-	,total varchar(500)
+	"date" varchar(50)
+	,atv_natv varchar(10)
+	,category_nm varchar(100)
+	,price varchar(50)
+	,total varchar(50)
 	,description varchar(500)
 	,"path" varchar(500)
 );
