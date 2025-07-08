@@ -1,5 +1,6 @@
+DROP TABLE IF EXISTS public.ingest_ativos_details;
 CREATE TABLE public.ingest_ativos_details (
-	ativo varchar(100)
-	,setor varchar(100)
-	,categoria varchar(100)
+	ativo VARCHAR(100)
+	,setor VARCHAR(100)
+	,categoria VARCHAR(100)
 );

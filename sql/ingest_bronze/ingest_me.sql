@@ -1,9 +1,10 @@
+DROP TABLE IF EXISTS public.ingest_me;
 CREATE TABLE public.ingest_me (
-	"date" varchar(50)
-	,atv_natv varchar(10)
-	,category_nm varchar(100)
-	,price varchar(50)
-	,total varchar(50)
-	,description varchar(500)
-	,"path" varchar(500)
+	"date" VARCHAR(50)
+	,atv_natv VARCHAR(10)
+	,category_nm VARCHAR(100)
+	,price VARCHAR(50)
+	,total VARCHAR(50)
+	,description VARCHAR(500)
+	,"path" VARCHAR(500)
 );

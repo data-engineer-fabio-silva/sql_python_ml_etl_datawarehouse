@@ -27,14 +27,14 @@ cleaned intermediate layer for downstream consumption.
 
 CREATE OR REPLACE VIEW public.vw_stg_bov AS
 SELECT 
-  cast(entrada_saida as varchar(20)) AS entrada_saida
-  ,to_date(data, 'DD/MM/YYYY') AS data
-  ,cast(movimentacao as varchar(100)) AS movimentacao
-  ,cast(produto as varchar(200)) AS produto_dsc
-  ,split_part(cast(produto as varchar(200)), ' - ', 1) AS produto
-  ,cast(instituicao as varchar(100)) AS instituicao
-  ,cast(quantidade as numeric(15,2)) AS quantidade
-  ,cast(NULLIF(preco_unitario, '-') as numeric(15,2)) AS preco_unitario
-  ,cast(NULLIF(valor_da_operacao, '-') as numeric(15,2)) AS valor_da_operacao
-  ,cast(path as varchar(500)) AS path
+  CAST(entrada_saida AS VARCHAR(20)) AS entrada_saida
+  ,TO_DATE("data", 'DD/MM/YYYY') AS data
+  ,CAST(movimentacao AS VARCHAR(100)) AS movimentacao
+  ,CAST(produto AS VARCHAR(200)) AS produto_dsc
+  ,SPLIT_PART(CAST(produto AS VARCHAR(200)), ' - ', 1) AS produto
+  ,CAST(instituicao AS VARCHAR(100)) AS instituicao
+  ,CAST(quantidade AS NUMERIC(15,2)) AS quantidade
+  ,CAST(NULLIF(preco_unitario, '-') AS NUMERIC(15,2)) AS preco_unitario
+  ,CAST(NULLIF(valor_da_operacao, '-') AS NUMERIC(15,2)) AS valor_da_operacao
+  ,CAST(path AS VARCHAR(500)) AS path
 FROM ingest_bov;

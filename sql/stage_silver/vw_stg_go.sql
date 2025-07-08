@@ -1,12 +1,12 @@
 CREATE OR REPLACE VIEW public.vw_stg_go
 AS SELECT 
-    to_date(date, 'YYYY-MM-DD') AS data
-    ,cast(replace(atv_natv, '.0', '') as bit(1)) AS atv_natv
-    ,cast(in_out as varchar(5)) AS in_out
-    ,cast(category_nm as varchar(50)) AS category_nm
-    ,cast(replace(price, ',', '.') as numeric(15,4)) AS price
-    ,cast(replace(total, ',', '.') as numeric(15,4)) AS total
-    ,cast(description as varchar(100)) AS description
-    ,cast(path as varchar(200)) AS path
+    TO_DATE("date", 'YYYY-MM-DD') AS data
+    ,CAST(REPLACE(atv_natv, '.0', '') AS BIT(1)) AS atv_natv
+    ,CAST(in_out AS VARCHAR(5)) AS in_out
+    ,CAST(category_nm AS VARCHAR(50)) AS category_nm
+    ,CAST(REPLACE(price, ',', '.') AS NUMERIC(15,4)) AS price
+    ,CAST(REPLACE(total, ',', '.') AS NUMERIC(15,4)) AS total
+    ,CAST(description AS VARCHAR(100)) AS description
+    ,CAST(path AS VARCHAR(200)) AS path
 FROM ingest_go
-WHERE date not in ('NaT', 'nan');
+WHERE date NOT IN ('NaT', 'nan');

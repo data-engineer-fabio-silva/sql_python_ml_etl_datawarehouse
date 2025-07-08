@@ -1,12 +1,13 @@
+DROP TABLE IF EXISTS public.ingest_legacy_fact;
 CREATE TABLE public.ingest_legacy_fact (
-	"date" varchar(50)
-	,in_out varchar(10)
-	,category_nm varchar(100)
-	,sub_category_nm varchar(100)
-	,qtd varchar(50)
-	,price varchar(50)
-	,total varchar(50)
-	,status varchar(100)
-	,description varchar(500)
-	,"path" varchar(500)
+	"date" VARCHAR(50)
+	,in_out VARCHAR(10)
+	,category_nm VARCHAR(100)
+	,sub_category_nm VARCHAR(100)
+	,qtd VARCHAR(50)
+	,price VARCHAR(50)
+	,total VARCHAR(50)
+	,status VARCHAR(100)
+	,description VARCHAR(500)
+	,"path" VARCHAR(500)
 );
