@@ -3,14 +3,18 @@ from collections import defaultdict, deque
 import os
 import vars_env
 
-# Caminho onde os scripts SQL das views estão salvos
-SQL_SCRIPT_PATH = './sql/views'
+# Path where the SQL script of views are salved
+SQL_SCRIPT_PATHS = ['./sql/stage_silver', './sql/consumption_gold']
 
-# Função para carregar o conteúdo de um script SQL
+# Function to load the content of SQL script
 def load_sql_script(view_name):
-    filepath = os.path.join(SQL_SCRIPT_PATH, f"{view_name}.sql")
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return f.read()
+    for path in SQL_SCRIPT_PATHS:
+        filepath = os.path.join(path, f"{view_name}.sql")
+        if os.path.isfile(filepath):
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return f.read()
+    # If file not found in any configured path
+    raise FileNotFoundError(f"SQL script '{view_name}.sql' not found in any configured path.")
 
 # Conexão com o banco
 DB_SECRETS = vars_env.db_secrets

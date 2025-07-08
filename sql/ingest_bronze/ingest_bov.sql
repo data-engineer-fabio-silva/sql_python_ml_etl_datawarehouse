@@ -21,15 +21,15 @@ and transformation in downstream views like `vw_stg_bov`.
 
 ================================================================================
 */
-
+DROP TABLE IF EXISTS public.ingest_boy;
 CREATE TABLE public.ingest_bov (
-	entrada_saida varchar(500),
-	"data" varchar(500),
-	movimentacao varchar(500),
-	produto varchar(500),
-	instituicao varchar(500),
-	quantidade varchar(500),
-	preco_unitario varchar(500),
-	valor_da_operacao varchar(500),
-	"path" varchar(500)
+	entrada_saida VARCHAR(50),
+	"data" VARCHAR(50),
+	movimentacao VARCHAR(100),
+	produto VARCHAR(100),
+	instituicao VARCHAR(100),
+	quantidade VARCHAR(50),
+	preco_unitario VARCHAR(50),
+	valor_da_operacao VARCHAR(50),
+	"path" VARCHAR(500)
 );

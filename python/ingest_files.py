@@ -81,21 +81,25 @@ def main():
         go_files = find_excel_files(vars.pth_dir_go)
         exec(conn, go_files, vars_env.table_nm_go)
 
-        # ####
+        ####
         salary_files = find_excel_files(vars.pth_dir_salary)
         exec(conn, salary_files, vars_env.table_nm_salary)
 
-        # ####
+        ####
         bov_files = find_excel_files(vars.pth_dir_bov)
         exec(conn, bov_files, vars_env.table_nm_bov)
 
-        # ####
+        ####
         legacy_fact_files = find_excel_files(vars.pth_dir_legacy_tables)
         exec(conn, legacy_fact_files, vars_env.table_nm_legacy_fact)
 
-        # ####        
+        ####        
         bank_cards_files = find_excel_files(vars.pth_dir_bank_cards)
         exec(conn, bank_cards_files, vars_env.table_nm_bank_cards)
+
+        ####        
+        receipts_files = find_excel_files(vars.pth_dir_receipts)
+        exec(conn, receipts_files, vars_env.table_nm_receipts)
 
     finally:
         conn.close()

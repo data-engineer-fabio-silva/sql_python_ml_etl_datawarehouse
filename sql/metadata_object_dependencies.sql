@@ -1,9 +1,9 @@
 CREATE TABLE public.metadata_object_dependencies (
-	id serial4 NOT NULL
-    ,object_name text NOT NULL
-    ,object_type text NOT NULL
-    ,depends_on text NULL
-    ,depends_on_type text NULL
-    ,last_updated timestamp NULL DEFAULT now()
+	id SERIAL4 NOT NULL
+    ,object_name TEXT NOT NULL
+    ,object_type TEXT NOT NULL
+    ,depends_on TEXT NULL
+    ,depends_on_type TEXT NULL
+    ,last_updated TIMESTAMP NULL DEFAULT NOW()
     ,CONSTRAINT metadata_object_dependencies_pkey PRIMARY KEY (id)
 );
