@@ -19,3 +19,7 @@
 
 ## Notes
 * Before running the 'recreate_views' script, validate that the table/views is added to metadata_object_dependencies.
+
+## Git config
+* git config user.email "you@example.com"
+* git config user.name "Your Name"
