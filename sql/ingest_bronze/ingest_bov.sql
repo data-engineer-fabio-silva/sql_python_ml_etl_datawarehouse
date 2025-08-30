@@ -21,7 +21,7 @@ and transformation in downstream views like `vw_stg_bov`.
 
 ================================================================================
 */
-DROP TABLE IF EXISTS public.ingest_boy;
+DROP TABLE IF EXISTS public.ingest_bov CASCADE;
 CREATE TABLE public.ingest_bov (
 	entrada_saida VARCHAR(50),
 	"data" VARCHAR(50),

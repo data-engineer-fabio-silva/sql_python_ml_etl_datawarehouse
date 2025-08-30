@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.ingest_legacy_fact;
+DROP TABLE IF EXISTS public.ingest_legacy_fact CASCADE;
 CREATE TABLE public.ingest_legacy_fact (
 	"date" VARCHAR(50)
 	,in_out VARCHAR(10)
