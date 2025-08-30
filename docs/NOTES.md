@@ -48,3 +48,7 @@
 
 - `put -r <c:\folder path\>`  
   ➤ Recursively uploads a local folder to the remote server.
+
+## Git config
+* git config user.email "you@example.com"
+* git config user.name "Your Name"
