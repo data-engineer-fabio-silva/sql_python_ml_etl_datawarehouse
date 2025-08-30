@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.ingest_receipts;
+DROP TABLE IF EXISTS public.ingest_receipts CASCADE;
 CREATE TABLE public.ingest_receipts (
 	"date" VARCHAR(50)
 	,receipt_number VARCHAR(100)
@@ -12,5 +12,6 @@ CREATE TABLE public.ingest_receipts (
 	,value_item VARCHAR(50)
 	,category VARCHAR(100)
 	,name_item VARCHAR(100)
+	,online VARCHAR(50)
 	,"path" VARCHAR(500)
 );

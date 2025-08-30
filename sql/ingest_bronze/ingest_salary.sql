@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.ingest_salary;
+DROP TABLE IF EXISTS public.ingest_salary CASCADE;
 CREATE TABLE public.ingest_salary (
 	"name" VARCHAR(50)
 	,worked_hours VARCHAR(50)
