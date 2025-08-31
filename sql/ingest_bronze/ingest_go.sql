@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.ingest_go;
+DROP TABLE IF EXISTS public.ingest_go CASCADE;
 CREATE TABLE public.ingest_go (
 	"date" VARCHAR(50)
 	,atv_natv VARCHAR(10)

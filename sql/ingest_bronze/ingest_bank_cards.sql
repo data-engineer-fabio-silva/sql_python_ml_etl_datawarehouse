@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS public.ingest_bank_cards;
+DROP TABLE IF EXISTS public.ingest_bank_cards CASCADE;
 CREATE TABLE public.ingest_bank_cards (
 	"date" VARCHAR(50)
 	,in_out VARCHAR(10)

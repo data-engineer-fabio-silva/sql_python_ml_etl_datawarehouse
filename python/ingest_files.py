@@ -1,13 +1,10 @@
 import os
 import pandas as pd
 import psycopg2
-from psycopg2 import sql
+from psycopg2 import sql # keep this import and psycopg2 due to errors
 import unicodedata
 import re
-import vars_env
 import vars
-# import utils
-# import json
 
 import warnings
 warnings.simplefilter('ignore', UserWarning)
@@ -36,7 +33,7 @@ def insert_data(conn, df, file_path, TABLE_NAME):
             cur.execute(insert_query, data)
         conn.commit()
 
-def limpar_texto(texto):
+def clean_text(texto):
 
     texto = unicodedata.normalize('NFKD', texto).encode('ASCII', 'ignore').decode('utf-8')
     
@@ -46,7 +43,7 @@ def limpar_texto(texto):
 def exec(conn, files, TABLE_NAME):
     
     if not files:
-        print('Nenhum arquivo .xlsx encontrado.')
+        print('No .xlsx files found !')
         return
     
     with conn.cursor() as cur:
@@ -58,48 +55,42 @@ def exec(conn, files, TABLE_NAME):
             df = pd.read_excel(file_path, engine='openpyxl')
             df = df.astype(str)
             
-            colunas_limpa = [limpar_texto(col) for col in df.columns]
+            cleaned_columns = [clean_text(col) for col in df.columns]
 
-            df = df.rename(columns = dict(zip(df.columns, colunas_limpa)))
+            df = df.rename(columns = dict(zip(df.columns, cleaned_columns)))
             
             insert_data(conn, df, file_path, TABLE_NAME)
-            print(f'Arquivo carregado: {file_path}')
+            print(f'File loaded: {file_path}')
         except Exception as e:
-            print(f'Erro ao processar {file_path}: {e}')
+            print(f'Error processing {file_path}: {e}')
 
 def main():
 
-    DB_SECRETS = vars_env.db_secrets
+    DB_SECRETS = vars.db_secrets
 
     conn = psycopg2.connect(**DB_SECRETS)
  
     try:
-        me_files = find_excel_files(vars.pth_dir_me)
-        exec(conn, me_files, vars_env.table_nm_me)
-
+        me_files = find_excel_files(vars.path_dir_me)
+        exec(conn, me_files, vars.table_nm_me)
         ####
-        go_files = find_excel_files(vars.pth_dir_go)
-        exec(conn, go_files, vars_env.table_nm_go)
-
+        go_files = find_excel_files(vars.path_dir_go)
+        exec(conn, go_files, vars.table_nm_go)
         ####
-        salary_files = find_excel_files(vars.pth_dir_salary)
-        exec(conn, salary_files, vars_env.table_nm_salary)
-
+        salary_files = find_excel_files(vars.path_dir_salary)
+        exec(conn, salary_files, vars.table_nm_salary)
         ####
-        bov_files = find_excel_files(vars.pth_dir_bov)
-        exec(conn, bov_files, vars_env.table_nm_bov)
-
+        bov_files = find_excel_files(vars.path_dir_bov)
+        exec(conn, bov_files, vars.table_nm_bov)
         ####
-        legacy_fact_files = find_excel_files(vars.pth_dir_legacy_tables)
-        exec(conn, legacy_fact_files, vars_env.table_nm_legacy_fact)
-
+        legacy_fact_files = find_excel_files(vars.path_dir_legacy_tables)
+        exec(conn, legacy_fact_files, vars.table_nm_legacy_fact)
         ####        
-        bank_cards_files = find_excel_files(vars.pth_dir_bank_cards)
-        exec(conn, bank_cards_files, vars_env.table_nm_bank_cards)
-
+        bank_cards_files = find_excel_files(vars.path_dir_bank_cards)
+        exec(conn, bank_cards_files, vars.table_nm_bank_cards)
         ####        
-        receipts_files = find_excel_files(vars.pth_dir_receipts)
-        exec(conn, receipts_files, vars_env.table_nm_receipts)
+        receipts_files = find_excel_files(vars.path_dir_receipts)
+        exec(conn, receipts_files, vars.table_nm_receipts)
 
     finally:
         conn.close()

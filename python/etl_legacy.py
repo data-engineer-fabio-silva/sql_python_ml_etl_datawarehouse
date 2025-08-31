@@ -1,3 +1,8 @@
+'''
+****
+This file is a ETL legacy version and is in the process to be EOL
+****
+'''
 import pandas as pd
 from datetime import date, timedelta, datetime
 import os
