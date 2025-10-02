@@ -1,13 +1,18 @@
 import os
+import sys
 import pandas as pd
 import psycopg2
 from psycopg2 import sql # keep this import and psycopg2 due to errors
 import unicodedata
 import re
-import vars
 
 import warnings
 warnings.simplefilter('ignore', UserWarning)
+
+# Add root directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+import vars
 
 def find_excel_files(root_folder):
 
@@ -45,7 +50,7 @@ def exec(conn, files, TABLE_NAME):
     if not files:
         print('No .xlsx files found !')
         return
-    
+      
     with conn.cursor() as cur:
         cur.execute(f"""TRUNCATE TABLE {TABLE_NAME}""")
         conn.commit()
@@ -66,9 +71,9 @@ def exec(conn, files, TABLE_NAME):
 
 def main():
 
-    DB_SECRETS = vars.db_secrets
+    db_secrets = vars.db_secrets
 
-    conn = psycopg2.connect(**DB_SECRETS)
+    conn = psycopg2.connect(**db_secrets)
  
     try:
         me_files = find_excel_files(vars.path_dir_me)
