@@ -1,6 +1,20 @@
-pandas==2.2.2
+# ================================================================
+# Python Version: 3.11.9
+# Changes history: 
+#  - Added great-expectations and documentation / Fabio Silva / 2025-09-01
+#  - Downgrade to python 3.11.9 due to great expectations dependencies / Fabio Silva / 2025-09-16
+# ================================================================
+# === PRODUCTION ===
+# === CORE DATA PROCESSING ===
+pandas==2.1.4                   # !!! Downstream dependency on GE !!!
 openpyxl==3.1.3
+# === DATABASE & ETL ===
 psycopg2==2.9.9
 python-dotenv==1.0.1
-paramiko==3.4.0
-uuid-utils==0.10.0
+great-expectations==1.5.10      # !!! Upstream dependency on pandas version!!!
+great_expectations[postgresql]==0.16.8
+# === LEGACY ===
+# paramiko==3.4.0               # Used on sftp connection
+# uuid-utils==0.10.0            # Used to generate uuid as identifiers
+# === DEVELOPMENT ONLY ===
+# WIP

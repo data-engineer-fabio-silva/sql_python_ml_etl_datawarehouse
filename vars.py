@@ -1,9 +1,8 @@
 import utils
 from dotenv import dotenv_values, find_dotenv
-import json
+# import json
 
 #### load environment variables
-
 env_file_path = find_dotenv()
 
 if env_file_path:
@@ -11,13 +10,23 @@ if env_file_path:
     env_file = dotenv_values(env_file_path)
 
     # database secrets
-    db_secrets = json.loads(env_file.get('db_secrets'))    
+    # db_secrets = json.loads(env_file.get('db_secrets'))  
+
+    db_secrets = {
+        "dbname": env_file.get('db_postgres_nm'),
+        "user": env_file.get('db_user_nm'),
+        "password": env_file.get('db_password'),
+        "host": env_file.get('db_postgres_host', 'localhost'), 
+        "port": env_file.get('db_postgres_port', '5432')      
+    }
+
+    gx_connection_string = f"postgresql+psycopg2://{env_file.get('db_user_nm')}:{env_file.get('db_password')}@{env_file.get('db_postgres_host', 'localhost')}:{env_file.get('db_postgres_port', '5432')}/{env_file.get('db_postgres_nm')}"
 
     # windows source repository path
     win_path_plan_fin = env_file.get('win_path_plan_fin')
 
     # root data repository path
-    path_base = utils.create_path(win_path_plan_fin, 'google_drive\p_p_g\p_p_g',)
+    path_base = utils.create_path(win_path_plan_fin, 'google_drive\p_p_f\p_p_f',)
 
     # data sources folders path
     path_dir_me = utils.create_path(path_base, 'me')
