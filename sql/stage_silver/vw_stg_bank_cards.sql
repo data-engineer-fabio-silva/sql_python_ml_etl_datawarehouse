@@ -1,6 +1,6 @@
 CREATE OR REPLACE VIEW public.vw_stg_bank_cards
 AS SELECT 
-    TO_DATE("date", 'YYYY-MM-DD') AS data
+    TO_DATE("date", 'YYYY-MM-DD') AS "date"
     ,CAST(in_out AS VARCHAR(5)) AS in_out
     ,CAST(TRIM(category_nm) AS VARCHAR(50)) AS category_nm
     ,CAST(TRIM(sub_category_nm) AS VARCHAR(50)) AS sub_category_nm
@@ -11,4 +11,6 @@ AS SELECT
     ,CAST(description AS VARCHAR(100)) AS description
     ,CAST(path AS VARCHAR(200)) AS path
 FROM ingest_bank_cards
-WHERE date NOT IN ('NaT', 'nan') AND total <> 'nan';
+WHERE 
+    LOWER("date") NOT IN ('nat', 'nan')
+        AND LOWER(total) <> 'nan';

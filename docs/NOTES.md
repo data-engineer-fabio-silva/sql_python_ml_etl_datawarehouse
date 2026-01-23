@@ -22,6 +22,7 @@ This section is a work-in-progress, and should not be considered official until 
 
 ## Notes
 * Before running the 'recreate_views' script, validate that the table/views is added to metadata_object_dependencies.
+* Currently it isn't feasible to automate the process of categorizing credit card transactions due to the variety of patterns in the transaction descriptions
 
 # Python & SFTP Command Descriptions
 
@@ -52,6 +53,49 @@ This section is a work-in-progress, and should not be considered official until 
 - `put -r <c:\folder path\>`  
   ➤ Recursively uploads a local folder to the remote server.
 
+---
+
 ## Git config
 * git config user.email "you@example.com"
 * git config user.name "Your Name"
+
+---
+
+## First setup
+
+- Download and install python 
+  ➤ Verify the recommended version on requirements.txt file
+  ➤ https://www.python.org/downloads/release/python-3119/
+  ➤ Choose the option to add PATH and install
+
+- Create or activate venv 
+  ➤ python -m venv venv
+  ➤ venv/Scritps/activate
+  ➤ deactivate
+
+- Install requirements
+  ➤ `pip install -r requirements.txt`  
+  ➤ Installs all Python packages listed in `requirements.txt`.
+
+- Set .env 
+  ➤ request to the project owner 
+
+- Database/Backend setup
+  ➤ WIP - run compose files to create the postgres database
+  ➤ docker container is mandatory
+
+- Create ingest and stage tables
+  ➤ run creation script presente on sql/ingest_bronze and sql/stage_silve
+  ➤ script automate the creation is a WIP
+
+- Create and populate the metadata table
+  ➤ request to the project owner
+
+- Download the raw files  
+  ➤ request to the project owner 
+
+- Run the ingest code
+  ➤ Run the ingest_files python code
+
+- Run the recreate views code
+  ➤ code to create sql/consumption_gold view

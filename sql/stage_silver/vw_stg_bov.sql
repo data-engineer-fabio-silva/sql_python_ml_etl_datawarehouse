@@ -25,10 +25,10 @@ cleaned intermediate layer for downstream consumption.
 ================================================================================
 */
 
-CREATE OR REPLACE VIEW public.vw_stg_bov AS
-SELECT 
+CREATE OR REPLACE VIEW public.vw_stg_bov
+AS SELECT 
   CAST(entrada_saida AS VARCHAR(20)) AS entrada_saida
-  ,TO_DATE("data", 'DD/MM/YYYY') AS data
+  ,TO_DATE("data", 'DD/MM/YYYY') AS "date"
   ,CAST(movimentacao AS VARCHAR(100)) AS movimentacao
   ,CAST(produto AS VARCHAR(200)) AS produto_dsc
   ,SPLIT_PART(CAST(produto AS VARCHAR(200)), ' - ', 1) AS produto
