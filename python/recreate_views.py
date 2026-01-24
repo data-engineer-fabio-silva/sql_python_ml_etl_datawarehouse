@@ -1,16 +1,21 @@
 import psycopg2
 from collections import defaultdict, deque
 import os
-import utils
+import sys
+# import utils
+
+# Add root directory to sys.path
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 import vars
 
 # Path where the SQL script of views are salved
-SQL_SCRIPT_PATHS = [vars.path_dir_stg_silver, vars.parh_dir_consumption_gold]
+sql_script_paths = [vars.path_dir_stg_silver, vars.path_dir_consumption_gold]
 
 # Function to load the content of SQL script
 def load_sql_script(view_name):
 
-    for path in SQL_SCRIPT_PATHS:
+    for path in sql_script_paths:
         filepath = os.path.join(path, f"{view_name}.sql")
         # print('filepath', filepath)
         if os.path.isfile(filepath):
@@ -20,9 +25,9 @@ def load_sql_script(view_name):
     raise FileNotFoundError(f"SQL script '{view_name}.sql' not found in any configured path.")
 
 # Database conection
-DB_SECRETS = vars.db_secrets
+db_secrets = vars.db_secrets
 
-conn = psycopg2.connect(**DB_SECRETS)
+conn = psycopg2.connect(**db_secrets)
 cur = conn.cursor()
 
 # Search dependencies
