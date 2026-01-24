@@ -23,13 +23,13 @@ def find_excel_files(root_folder):
                 excel_files.append(os.path.join(dirpath, file))
     return excel_files
 
-def insert_data(conn, df, file_path, TABLE_NAME):
+def insert_data(conn, df, file_path, table_name):
     with conn.cursor() as cur:
         columns = list(df.columns) + ['path']
         values_template = ', '.join(['%s'] * len(columns))
 
         insert_query = sql.SQL(f"""
-            INSERT INTO {TABLE_NAME} ({', '.join(columns)})
+            INSERT INTO {table_name} ({', '.join(columns)})
             VALUES ({values_template})
         """)
 
@@ -45,14 +45,14 @@ def clean_text(texto):
     texto = re.sub(r'[^\w]', '_', texto)
     return texto
 
-def exec(conn, files, TABLE_NAME):
+def exec(conn, files, table_name):
     
     if not files:
         print('No .xlsx files found !')
         return
       
     with conn.cursor() as cur:
-        cur.execute(f"""TRUNCATE TABLE {TABLE_NAME}""")
+        cur.execute(f"""TRUNCATE TABLE {table_name}""")
         conn.commit()
 
     for file_path in files:
@@ -64,7 +64,7 @@ def exec(conn, files, TABLE_NAME):
 
             df = df.rename(columns = dict(zip(df.columns, cleaned_columns)))
             
-            insert_data(conn, df, file_path, TABLE_NAME)
+            insert_data(conn, df, file_path, table_name)
             print(f'File loaded: {file_path}')
         except Exception as e:
             print(f'Error processing {file_path}: {e}')
@@ -96,6 +96,9 @@ def main():
         ####        
         receipts_files = find_excel_files(vars.path_dir_receipts)
         exec(conn, receipts_files, vars.table_nm_receipts)
+        ####        
+        b_files = find_excel_files(vars.path_dir_b)
+        exec(conn, b_files, vars.table_nm_b)
 
     finally:
         conn.close()
